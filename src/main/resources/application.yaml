@@ -1,0 +1,27 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    url: jdbc:postgresql://localhost:5432/postgres
+    password: postgres
+
+  jackson:
+    default-property-inclusion: non_null
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+
+exchange-rate:
+  months-back: 6
+  http:
+    base-url: "https://api.fiscaldata.treasury.gov"
+    uri: "/services/api/fiscal_service/v1/accounting/od/rates_of_exchange"
+    fields:
+      - "exchange_rate"
+      - "record_date"
+    filter:
+      start: "record_date:gte:"
+      end: "record_date:lte:"
+      country-currency: "country_currency_desc:eq:"

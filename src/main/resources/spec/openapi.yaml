@@ -1,0 +1,201 @@
+openapi: 3.0.1
+info:
+  title: Purchase Transaction API
+  version: 1.0.0
+  description: API for managing purchase transactions.
+
+paths:
+  /transactions:
+    post:
+      summary: Create a purchase transaction.
+      operationId: createTransaction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PurchaseTransaction'
+      responses:
+        '201':
+          description: Transaction stored successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PurchaseTransactionResponse'
+        '400':
+          description: Invalid client request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+              example:
+                title: Invalid client Request.
+                detail: "The request is missing required field(s)."
+                logReference: 54b1cd4f-297d-4544-ba1b-03225bc35f4e
+        default:
+          description: An unexpected error occurred.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
+  /transactions/{id}:
+    get:
+      summary: Retrieve a purchase transaction with currency conversion.
+      operationId: getConvertedTransaction
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Unique identifier of the purchase transaction.
+          schema:
+            type: string
+            pattern: ^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$
+            example: c17ce8ab-299f-47f7-bf0e-f5c95853fc08
+        - name: targetCurrency
+          in: query
+          required: false
+          description: |-
+            Target currency code to convert the purchase amount.
+            If no targetCurrency is provided, the default USD currency will be provided.
+          schema:
+            type: string
+            pattern: ^[A-Za-z]+-[A-Za-z]+$
+            example: Brazil-Real
+      responses:
+        '200':
+          description: Purchase transaction with currency conversion details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConvertedTransactionResponse'
+        '400':
+          description: Currency conversion is not available.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+              example:
+                title: The currency conversion is not available.
+                detail: "The target currency was not found: 'Brazil-Dollar'."
+                logReference: 64f1cf4f-297d-4194-ba1b-021254c99c29
+        '404':
+          description: Purchase transaction not found.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+              example:
+                title: Purchase transaction not found.
+                detail: "There was no transaction with given id."
+                logReference: 64f1cf4f-297d-4194-ba1b-021254c99c29
+        default:
+          description: An unexpected error occurred.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
+components:
+  schemas:
+    PurchaseTransaction:
+      type: object
+      properties:
+        description:
+          type: string
+          maxLength: 50
+          description: A brief description of the transaction, not exceeding 50 characters.
+        transactionDate:
+          type: string
+          format: date
+          description: The date of the transaction in YYYY-MM-DD format.
+        purchaseAmount:
+          type: number
+          description: The amount of the purchase in United States dollars, rounded to the nearest cent.
+      required:
+        - purchaseAmount
+        - transactionDate
+      example:
+        description: Books
+        transactionDate: 2023-12-10
+        purchaseAmount: 120.00
+
+    PurchaseTransactionResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the transaction
+        description:
+          type: string
+          description: A brief description of the transaction, not exceeding 50 characters.
+        transactionDate:
+          type: string
+          format: date
+          description: The date of the transaction in YYYY-MM-DD format.
+        purchaseAmount:
+          type: number
+          description: The amount of the purchase in United States dollars, rounded to the nearest cent.
+      example:
+        id: c17ce8ab-299f-47f7-bf0e-f5c95853fc08
+        description: Books
+        transactionDate: 2023-12-10
+        purchaseAmount: 120.00
+
+    ConvertedTransactionResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the transaction
+        description:
+          type: string
+          description: A brief description of the transaction, not exceeding 50 characters.
+        transactionDate:
+          type: string
+          format: date
+          description: The date of the transaction in YYYY-MM-DD format.
+        purchaseAmount:
+          type: number
+          description: The original purchase amount in United States dollars.
+        targetCurrency:
+          type: string
+        exchangeRate:
+          type: number
+          description: The exchange rate used for currency conversion.
+        convertedAmount:
+          type: number
+          description: The converted amount in the target currency, rounded to two decimal places.
+      required:
+        - id
+        - transactionDate
+        - purchaseAmount
+      example:
+        id: c17ce8ab-299f-47f7-bf0e-f5c95853fc08
+        description: Books
+        transactionDate: 2023-12-10
+        purchaseAmount: 120.00
+        exchangeRate: 4.93
+        convertedAmount: 591.77
+        targetCurrency: Brazil-Real
+
+    ProblemDetails:
+      type: object
+      properties:
+        title:
+          type: string
+          description: A short summary of the problem.
+        details:
+          type: string
+          description: A specific explanation to this occurrence of the problem.
+        logReference:
+          type: string
+          description: A unique identifier to relate the error to the corresponding log message.
+      required:
+        - title
+        - details
+        - logReference
+      example:
+        title: Currency Conversion Error.
+        detail: Unable to find an exchange rate for the requested date.
+        logReference: ca242a29-1729-43ab-936d-e3c095aca3b5
