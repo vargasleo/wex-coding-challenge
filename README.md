@@ -11,6 +11,18 @@ Additionally, the **maven-openapi-generator-plugin** is used to generate server 
 - Docker
 - Docker Compose
 
+### Building the Project
+Before running the project with Docker Compose, it is essential to build the JAR file using Maven. 
+This step compiles the project and generates the necessary artifacts for running the application in a Docker container.
+
+To build the project, execute the following command in the root directory of the project:
+
+```bash
+mvn clean install
+```
+
+This command will clean the target directory, compile the source code, and create the JAR file wex-coding-challenge-0.0.1-SNAPSHOT.jar in the target directory.
+
 ### Running the Project
 #### Starting the Application and Database
 
