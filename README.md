@@ -1,9 +1,5 @@
 # wex-coding-challenge
 
-WEX Coding Challenge
-
-## WEX Coding Challenge
-
 This project is part of the WEX Coding Challenge. Below are instructions on how to set up and run the project, and conduct code analysis with SonarQube.
 
 ### Documentation
