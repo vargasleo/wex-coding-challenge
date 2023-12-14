@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.util.function.Supplier;
 
 import static com.example.wexcodingchallenge.exception.CustomHttpExceptionFactory.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CustomHttpExceptionFactoryTest {
 

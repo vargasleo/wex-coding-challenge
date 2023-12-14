@@ -10,3 +10,11 @@ exchange-rate:
       start: "record_date:gte:"
       end: "record_date:lte:"
       country-currency: "country_currency_desc:eq:"
+
+spring:
+  datasource:
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    url: jdbc:tc:postgresql:11.1:///integration-tests-db
+  jpa:
+    hibernate:
+      ddl-auto: create
