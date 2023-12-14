@@ -6,9 +6,14 @@ WEX Coding Challenge
 
 This project is part of the WEX Coding Challenge. Below are instructions on how to set up and run the project, and conduct code analysis with SonarQube.
 
+### Documentation
+This project leverages an OpenAPI specification to define and document its API. The specification file can be found in the resources folder.
+
+Additionally, the **maven-openapi-generator-plugin** is used to generate server stubs and client SDKs based on this OpenAPI specification. 
+
 ### Prerequisites
 - Docker
-- Docker Compose 
+- Docker Compose
 
 ### Running the Project
 #### Starting the Application and Database
